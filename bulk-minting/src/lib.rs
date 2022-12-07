@@ -70,7 +70,7 @@ impl ParasFactory {
     }
 
     #[payable]
-    pub fn create_child_contract(
+    pub fn create_nft_contract(
         &mut self,
         collection: AccountId,
         metadata: NFTContractMetadata,
