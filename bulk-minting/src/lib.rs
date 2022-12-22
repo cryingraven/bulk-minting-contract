@@ -1,5 +1,5 @@
 use std::collections::HashMap;
-use near_sdk::{env, near_bindgen, AccountId, Balance, Promise, ext_contract, Gas, StorageUsage, PanicOnDefault, is_promise_success};
+use near_sdk::{env, near_bindgen, AccountId, Balance, Promise, ext_contract, Gas, StorageUsage, PanicOnDefault, is_promise_success, PublicKey};
 use near_contract_standards::non_fungible_token::metadata::{
     NFTContractMetadata,
 };
@@ -45,6 +45,13 @@ pub struct Sale {
 
 #[derive(Deserialize, Serialize, BorshSerialize, BorshDeserialize)]
 #[serde(crate = "near_sdk::serde")]
+pub struct CheckResult {
+    pub result: bool
+}
+
+
+#[derive(Deserialize, Serialize, BorshSerialize, BorshDeserialize)]
+#[serde(crate = "near_sdk::serde")]
 pub struct NFTArgs {
     pub metadata: NFTContractMetadata,
     pub owner_id: AccountId,
@@ -73,6 +80,7 @@ impl ParasFactory {
     pub fn create_nft_contract(
         &mut self,
         collection: AccountId,
+        public_key: PublicKey,
         metadata: NFTContractMetadata,
         supply: u32,
         sale: Sale
@@ -91,7 +99,7 @@ impl ParasFactory {
             .unwrap();
         Promise::new(subaccount_id.clone())
             .create_account()
-            .add_full_access_key(env::signer_account_pk())
+            .add_full_access_key(public_key)
             .transfer(CONTRACT_BALANCE)
             .deploy_contract(CODE.to_vec())
             .function_call("new".to_string(), init_args, 0, CREATE_CONTRACT)
@@ -146,6 +154,16 @@ impl ParasFactory {
         nft_account_id: String,
     ) -> bool {
         self.contracts.contains(&nft_account_id)
+    }
+
+    pub fn check_contract_exist(
+        &self,
+        nft_account_id: String,
+    ) -> CheckResult {
+        let result= self.contracts.contains(&nft_account_id);
+        CheckResult{
+            result
+        }
     }
 
 }
