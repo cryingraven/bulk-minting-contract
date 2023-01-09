@@ -14,8 +14,6 @@ const DEPLOY_BALANCE: Balance = 10_000_000_000_000_000_000_000_000; // 10 N
 const CODE: &[u8] = include_bytes!("nft.wasm");
 const CREATE_CONTRACT: Gas = Gas(70 * 10u64.pow(12));
 const CREATE_CALLBACK: Gas = Gas(10 * 10u64.pow(12));
-const NFT_CONTRACT: StorageUsage = 550_000;
-const TOKEN: StorageUsage = 360;
 type BasisPoint = u16;
 
 #[ext_contract(bulk_self)]
